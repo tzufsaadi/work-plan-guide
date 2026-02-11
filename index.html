@@ -17,15 +17,15 @@
             color: #1F2937; /* gray-800 */
         }
 
-        /* Chart Container Styling - Mandatory Requirements */
+        /* Chart Container Styling */
         .chart-container {
             position: relative;
             width: 100%;
-            max-width: 600px; /* Explicit max-width */
+            max-width: 600px;
             margin-left: auto;
             margin-right: auto;
-            height: 350px; /* Base height */
-            max-height: 400px; /* Max height cap */
+            height: 350px;
+            max-height: 400px;
             background-color: white;
             border-radius: 0.5rem;
             padding: 1rem;
@@ -38,13 +38,13 @@
             }
         }
 
-        /* Custom Utilities for Flow Diagram (No SVG) */
+        /* Flow Diagram Styling */
         .flow-step {
             position: relative;
             padding: 1.5rem;
             background: white;
             border-radius: 0.5rem;
-            border-right: 4px solid #06B6D4; /* cyan-500 */
+            border-right: 4px solid #06B6D4;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             margin-bottom: 2rem;
         }
@@ -55,7 +55,7 @@
             bottom: -1.5rem;
             left: 50%;
             transform: translateX(50%);
-            color: #9CA3AF; /* gray-400 */
+            color: #9CA3AF;
             font-size: 1.2rem;
         }
 
@@ -65,7 +65,7 @@
 
         /* AI Section Styling */
         .ai-response-content ul {
-            list-style-type: none; /* Removed default bullets to control formatting */
+            list-style-type: none;
             padding-right: 0;
             margin-top: 0.5rem;
             margin-bottom: 0.5rem;
@@ -80,16 +80,16 @@
         .ai-response-content strong {
             font-weight: 700;
             color: #1E3A8A;
-            display: block; /* Make titles distinct blocks */
+            display: block;
             margin-bottom: 0.25rem;
         }
 
         /* Palette Classes */
-        .text-primary { color: #1E3A8A; } /* blue-900 */
+        .text-primary { color: #1E3A8A; }
         .bg-primary { background-color: #1E3A8A; }
-        .text-secondary { color: #06B6D4; } /* cyan-500 */
+        .text-secondary { color: #06B6D4; }
         .bg-secondary { background-color: #06B6D4; }
-        .text-accent { color: #F59E0B; } /* amber-500 */
+        .text-accent { color: #F59E0B; }
         .bg-accent { background-color: #F59E0B; }
         
         /* Loading Animation */
@@ -99,7 +99,6 @@
             border-top: 3px solid #06B6D4;
             width: 20px;
             height: 20px;
-            -webkit-animation: spin 1s linear infinite; /* Safari */
             animation: spin 1s linear infinite;
             display: inline-block;
         }
@@ -109,12 +108,6 @@
             100% { transform: rotate(360deg); }
         }
     </style>
-    <!-- 
-        Palette Selection: Brilliant Blues & Teal
-        Primary: #1E3A8A (Deep Blue)
-        Secondary: #06B6D4 (Vibrant Cyan)
-        Accent: #F59E0B (Amber/Orange for highlights)
-    -->
 </head>
 <body class="p-4 md:p-8">
 
@@ -127,7 +120,7 @@
 
     <main class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 
-        <!-- Section 1: Introduction & Principles -->
+        <!-- Section 1: Introduction -->
         <section class="col-span-1 md:col-span-2 lg:col-span-3 bg-white rounded-xl shadow-lg p-8 border-t-8 border-primary">
             <h3 class="text-3xl font-bold text-gray-800 mb-6">עקרונות היסוד: המהפכה התפיסתית</h3>
             <p class="text-lg text-gray-600 mb-8 leading-relaxed">
@@ -136,25 +129,21 @@
             </p>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Principle 1 -->
                 <div class="bg-gray-50 p-6 rounded-lg text-center hover:shadow-md transition-shadow">
                     <div class="text-4xl mb-4">👁️</div>
                     <h4 class="font-bold text-primary text-xl mb-2">שקיפות</h4>
                     <p class="text-sm text-gray-600">התוכנית גלויה לציבור ולעובדים. מה שלא שקוף, לא קיים.</p>
                 </div>
-                <!-- Principle 2 -->
                 <div class="bg-gray-50 p-6 rounded-lg text-center hover:shadow-md transition-shadow">
                     <div class="text-4xl mb-4">📏</div>
                     <h4 class="font-bold text-primary text-xl mb-2">מדידות</h4>
                     <p class="text-sm text-gray-600">מה שלא נמדד – לא מנוהל. כל יעד חייב מספר.</p>
                 </div>
-                <!-- Principle 3 -->
                 <div class="bg-gray-50 p-6 rounded-lg text-center hover:shadow-md transition-shadow">
                     <div class="text-4xl mb-4">🧩</div>
                     <h4 class="font-bold text-primary text-xl mb-2">אינטגרציה</h4>
                     <p class="text-sm text-gray-600">הלימה מוחלטת בין המשימות, התקציב וכוח האדם.</p>
                 </div>
-                <!-- Principle 4 -->
                 <div class="bg-gray-50 p-6 rounded-lg text-center hover:shadow-md transition-shadow">
                     <div class="text-4xl mb-4">🔄</div>
                     <h4 class="font-bold text-primary text-xl mb-2">המשכיות</h4>
@@ -163,7 +152,7 @@
             </div>
         </section>
 
-        <!-- Section 2: The Planning Funnel (HTML Structure) -->
+        <!-- Section 2: The Planning Funnel -->
         <section class="col-span-1 lg:col-span-1">
             <div class="sticky top-8">
                 <h3 class="text-2xl font-bold text-primary mb-6">הפירמידה התכנונית</h3>
@@ -218,7 +207,7 @@
             <!-- AI Tool -->
             <div class="bg-gradient-to-br from-indigo-50 to-white p-6 rounded-xl border border-indigo-100 shadow-lg mt-4 ring-1 ring-indigo-50 relative">
                 
-                <!-- VISIBLE API Key Toggle -->
+                <!-- API Key Toggle -->
                 <button onclick="toggleApiKeyInput()" class="absolute top-4 left-4 bg-white border border-gray-200 text-gray-600 hover:text-primary hover:border-primary px-3 py-1 rounded-full text-xs font-bold shadow-sm transition-all flex items-center gap-1">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -300,7 +289,7 @@
             </div>
         </section>
 
-        <!-- Section 5: Consultants (New Section) -->
+        <!-- Section 5: Consultants -->
         <section class="col-span-1 md:col-span-2 lg:col-span-3">
             <h3 class="text-2xl font-bold text-primary mb-6 border-b pb-2">תפקיד חברות הייעוץ בתוכנית העבודה</h3>
             <p class="text-gray-600 mb-6">
@@ -369,7 +358,7 @@
 
     <script>
         // --- Gemini API Configuration ---
-        const apiKey = ""; // Keep empty for local env injection, override with user input for prod
+        const apiKey = ""; // Keep empty
 
         // --- UI Functions for API Key ---
         function toggleApiKeyInput() {
@@ -410,7 +399,7 @@
                 return;
             }
 
-            // Determine which key to use:
+            // Determine which key to use
             let activeKey = apiKey; 
             if (!activeKey) {
                 activeKey = localStorage.getItem('gemini_api_key') || document.getElementById('userApiKey').value;
@@ -418,7 +407,6 @@
 
             if (!activeKey) {
                 alert("לא נמצא מפתח API. אנא לחץ על כפתור 'הגדר מפתח' והזן את המפתח שלך מגוגל.");
-                // Ensure input is visible
                 const section = document.getElementById('apiKeySection');
                 section.classList.remove('hidden');
                 return;
@@ -445,7 +433,7 @@
             const userQuery = `הנושא הוא: ${input}`;
 
             try {
-                // Using stable model (gemini-1.5-flash) for better compatibility with personal keys
+                // FIXED: Using 'gemini-1.5-flash' which is the stable endpoint
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${activeKey}`;
                 
                 const response = await fetch(url, {
@@ -464,7 +452,10 @@
                     console.error("API Error Details:", errorData);
                     
                     let friendlyMsg = `שגיאה (${response.status}). `;
-                    if (response.status === 400 && errorData.error?.message?.includes('API key')) {
+                    
+                    if (response.status === 404) {
+                        friendlyMsg = "שגיאה 404: המודל לא נמצא. וודאו שהעתקתם את הקוד החדש (gemini-1.5-flash).";
+                    } else if (response.status === 400 && errorData.error?.message?.includes('API key')) {
                         friendlyMsg = "המפתח שהוזן אינו תקין (Invalid Key). אנא בדקו שוב.";
                         const section = document.getElementById('apiKeySection');
                         section.classList.remove('hidden');
