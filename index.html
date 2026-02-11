@@ -385,6 +385,16 @@
             }
         });
 
+        // --- Fetch Helper with Fallback ---
+        async function fetchGemini(model, key, payload) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
+            return fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+        }
+
         async function generateKPI() {
             const input = document.getElementById('aiInput').value;
             const resultContainer = document.getElementById('aiResultContainer');
@@ -431,21 +441,20 @@
             `;
 
             const userQuery = `הנושא הוא: ${input}`;
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] }
+            };
 
             try {
-                // FIXED: Using 'gemini-1.5-flash' which is the stable endpoint
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${activeKey}`;
-                
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: userQuery }] }],
-                        systemInstruction: { parts: [{ text: systemPrompt }] }
-                    })
-                });
+                // Try Primary Model: gemini-1.5-flash
+                let response = await fetchGemini('gemini-1.5-flash', activeKey, payload);
+
+                // If 404 (Model Not Found), try Fallback: gemini-pro
+                if (response.status === 404) {
+                    console.warn("Primary model not found (404), trying fallback...");
+                    response = await fetchGemini('gemini-pro', activeKey, payload);
+                }
 
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => ({}));
@@ -454,7 +463,7 @@
                     let friendlyMsg = `שגיאה (${response.status}). `;
                     
                     if (response.status === 404) {
-                        friendlyMsg = "שגיאה 404: המודל לא נמצא. וודאו שהעתקתם את הקוד החדש (gemini-1.5-flash).";
+                        friendlyMsg = "שגיאה 404: המודל לא נמצא גם בנסיון השני. ייתכן והמפתח אינו תקין.";
                     } else if (response.status === 400 && errorData.error?.message?.includes('API key')) {
                         friendlyMsg = "המפתח שהוזן אינו תקין (Invalid Key). אנא בדקו שוב.";
                         const section = document.getElementById('apiKeySection');
