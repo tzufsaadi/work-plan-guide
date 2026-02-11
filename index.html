@@ -216,7 +216,27 @@
             </div>
 
             <!-- AI Tool -->
-            <div class="bg-gradient-to-br from-indigo-50 to-white p-6 rounded-xl border border-indigo-100 shadow-lg mt-4 ring-1 ring-indigo-50">
+            <div class="bg-gradient-to-br from-indigo-50 to-white p-6 rounded-xl border border-indigo-100 shadow-lg mt-4 ring-1 ring-indigo-50 relative">
+                
+                <!-- API Key Toggle -->
+                <button onclick="toggleApiKeyInput()" class="absolute top-4 left-4 text-gray-400 hover:text-primary transition-colors" title="הגדרות API">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                </button>
+
+                <!-- API Key Input Section (Hidden by default) -->
+                <div id="apiKeySection" class="hidden mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <label class="block text-sm font-bold text-gray-700 mb-2">מפתח Gemini API (נדרש להפעלת ה-AI)</label>
+                    <input type="password" id="userApiKey" placeholder="הדבק כאן את המפתח..." class="w-full p-2 border border-gray-300 rounded mb-2 text-sm">
+                    <p class="text-xs text-gray-500 mb-2">
+                        המפתח נשמר בדפדפן שלך בלבד ולא נשלח לשום שרת אחר.
+                        <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-primary underline">השג מפתח בחינם כאן</a>.
+                    </p>
+                    <button onclick="saveApiKey()" class="bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700">שמור מפתח</button>
+                </div>
+
                 <div class="flex items-center gap-3 mb-4 border-b border-indigo-100 pb-3">
                     <div class="bg-white p-2 rounded-full shadow-sm text-2xl">🤖</div>
                     <div>
@@ -248,7 +268,7 @@
                 </div>
                 
                 <div id="aiError" class="mt-4 hidden p-3 bg-red-50 text-red-600 text-sm rounded border border-red-100 flex items-center gap-2">
-                    <span>⚠️</span> אירעה שגיאה. אנא נסו שנית מאוחר יותר.
+                    <span id="aiErrorText">⚠️ אירעה שגיאה. אנא נסו שנית מאוחר יותר.</span>
                 </div>
             </div>
         </section>
@@ -348,18 +368,59 @@
 
     <script>
         // --- Gemini API Configuration ---
-        const apiKey = ""; // API Key will be injected by the environment
+        const apiKey = ""; // Keep empty for local env injection, override with user input for prod
+
+        // --- UI Functions for API Key ---
+        function toggleApiKeyInput() {
+            const section = document.getElementById('apiKeySection');
+            section.classList.toggle('hidden');
+        }
+
+        function saveApiKey() {
+            const inputVal = document.getElementById('userApiKey').value;
+            if (inputVal.trim()) {
+                localStorage.setItem('gemini_api_key', inputVal.trim());
+                alert('המפתח נשמר בהצלחה בדפדפן!');
+                toggleApiKeyInput();
+            } else {
+                alert('אנא הזן מפתח תקין');
+            }
+        }
+
+        // Load saved key on startup
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedKey = localStorage.getItem('gemini_api_key');
+            if (savedKey) {
+                document.getElementById('userApiKey').value = savedKey;
+            }
+        });
 
         async function generateKPI() {
             const input = document.getElementById('aiInput').value;
             const resultContainer = document.getElementById('aiResultContainer');
             const resultDiv = document.getElementById('aiResult');
             const errorDiv = document.getElementById('aiError');
+            const errorText = document.getElementById('aiErrorText');
             const btnText = document.getElementById('aiBtnText');
             const loader = document.getElementById('aiLoader');
 
             if (!input.trim()) {
                 alert("אנא הזינו נושא או מטרה");
+                return;
+            }
+
+            // Determine which key to use:
+            // 1. Check if the environment injected a key (apiKey variable)
+            // 2. If not, check localStorage
+            // 3. If not, check the input field directly
+            let activeKey = apiKey; 
+            if (!activeKey) {
+                activeKey = localStorage.getItem('gemini_api_key') || document.getElementById('userApiKey').value;
+            }
+
+            if (!activeKey) {
+                alert("כדי להפעיל את ה-AI, יש להזין מפתח API בהגדרות (לחץ על גלגל השיניים בצד).");
+                toggleApiKeyInput();
                 return;
             }
 
@@ -369,7 +430,6 @@
             btnText.classList.add('hidden');
             loader.classList.remove('hidden');
 
-            // Updated Prompt for Output vs Outcome
             const systemPrompt = `
                 אתה מומחה לתכנון אסטרטגי ומדיניות ציבורית.
                 המשימה שלך היא לעזור למשתמש להבין את ההבדל בין "תפוקה" (Output) ל"תוצאה" (Outcome) עבור הנושא שהוא הזין.
@@ -386,7 +446,7 @@
 
             try {
                 // Determine API endpoint and payload
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${activeKey}`;
                 
                 const response = await fetch(url, {
                     method: 'POST',
@@ -399,7 +459,11 @@
                     })
                 });
 
-                if (!response.ok) throw new Error('Network response was not ok');
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    console.error("API Error:", errorData);
+                    throw new Error(`שגיאת תקשורת: ${response.status}`);
+                }
 
                 const data = await response.json();
                 const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text;
@@ -408,12 +472,17 @@
                     resultDiv.innerHTML = marked.parse(aiText);
                     resultContainer.classList.remove('hidden');
                 } else {
-                    throw new Error('No content generated');
+                    throw new Error('לא התקבלה תשובה מהמודל');
                 }
 
             } catch (error) {
                 console.error("Gemini Error:", error);
+                errorText.innerText = "אירעה שגיאה. אנא בדקו את מפתח ה-API ונסו שנית.";
                 errorDiv.classList.remove('hidden');
+                // Open settings if it's likely an auth error
+                if (error.message.includes('400') || error.message.includes('403')) {
+                    toggleApiKeyInput();
+                }
             } finally {
                 // UI State: Reset
                 btnText.classList.remove('hidden');
@@ -613,5 +682,4 @@
         });
     </script>
 </body>
-
 </html>
