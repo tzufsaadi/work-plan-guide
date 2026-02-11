@@ -218,13 +218,16 @@
 
                 <!-- API Key Input Section (Hidden by default) -->
                 <div id="apiKeySection" class="hidden mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200 mt-8">
-                    <label class="block text-sm font-bold text-gray-700 mb-2">מפתח Gemini API (נדרש להפעלת ה-AI)</label>
-                    <input type="password" id="userApiKey" placeholder="הדבק כאן את המפתח (מתחיל ב-AIza)..." class="w-full p-2 border border-gray-300 rounded mb-2 text-sm">
+                    <label class="block text-sm font-bold text-gray-700 mb-2">מפתח Gemini API</label>
+                    <input type="password" id="userApiKey" placeholder="הדבק כאן את המפתח (AIza...)" class="w-full p-2 border border-gray-300 rounded mb-2 text-sm">
                     <p class="text-xs text-gray-500 mb-2">
-                        המפתח נשמר בדפדפן שלך בלבד.
+                        המפתח נשמר בדפדפן שלך בלבד. וודא שאין רווחים בהעתקה.
                         <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-primary underline font-bold">השג מפתח בחינם כאן</a>.
                     </p>
-                    <button onclick="saveApiKey()" class="bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700 w-full md:w-auto">שמור והמשך</button>
+                    <div class="flex gap-2">
+                        <button onclick="saveApiKey()" class="bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700">שמור והמשך</button>
+                        <button onclick="clearApiKey()" class="bg-red-100 text-red-600 border border-red-200 px-3 py-1 rounded text-xs hover:bg-red-200">מחק מפתח שמור</button>
+                    </div>
                 </div>
 
                 <div class="flex items-center gap-3 mb-4 border-b border-indigo-100 pb-3 pt-2">
@@ -368,13 +371,22 @@
 
         function saveApiKey() {
             const inputVal = document.getElementById('userApiKey').value;
-            if (inputVal.trim()) {
-                localStorage.setItem('gemini_api_key', inputVal.trim());
-                alert('המפתח נשמר בהצלחה בדפדפן!');
+            // Sanitization: Remove whitespace and newlines
+            const cleanKey = inputVal.trim().replace(/\s/g, '');
+            
+            if (cleanKey.length > 20 && cleanKey.startsWith('AIza')) {
+                localStorage.setItem('gemini_api_key', cleanKey);
+                alert('המפתח נשמר בהצלחה! (תווים מיותרים הוסרו אוטומטית)');
                 toggleApiKeyInput();
             } else {
-                alert('אנא הזן מפתח תקין');
+                alert('המפתח נראה לא תקין. הוא חייב להתחיל ב-AIza. אנא בדוק שנית.');
             }
+        }
+
+        function clearApiKey() {
+            localStorage.removeItem('gemini_api_key');
+            document.getElementById('userApiKey').value = '';
+            alert('המפתח נמחק.');
         }
 
         // Load saved key on startup
@@ -387,7 +399,9 @@
 
         // --- Fetch Helper with Fallback ---
         async function fetchGemini(model, key, payload) {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
+            // Ensure key is clean before sending
+            const cleanKey = key.trim().replace(/\s/g, '');
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${cleanKey}`;
             return fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -410,17 +424,20 @@
             }
 
             // Determine which key to use
-            let activeKey = apiKey; 
-            if (!activeKey) {
-                activeKey = localStorage.getItem('gemini_api_key') || document.getElementById('userApiKey').value;
+            let rawKey = apiKey; 
+            if (!rawKey) {
+                rawKey = localStorage.getItem('gemini_api_key') || document.getElementById('userApiKey').value;
             }
 
-            if (!activeKey) {
+            if (!rawKey) {
                 alert("לא נמצא מפתח API. אנא לחץ על כפתור 'הגדר מפתח' והזן את המפתח שלך מגוגל.");
                 const section = document.getElementById('apiKeySection');
                 section.classList.remove('hidden');
                 return;
             }
+
+            // Clean Key again just to be safe
+            const activeKey = rawKey.trim().replace(/\s/g, '');
 
             // UI State: Loading
             resultContainer.classList.add('hidden');
@@ -452,7 +469,7 @@
 
                 // If 404 (Model Not Found), try Fallback: gemini-pro
                 if (response.status === 404) {
-                    console.warn("Primary model not found (404), trying fallback...");
+                    console.warn("Primary model not found (404), trying fallback to gemini-pro...");
                     response = await fetchGemini('gemini-pro', activeKey, payload);
                 }
 
@@ -463,13 +480,11 @@
                     let friendlyMsg = `שגיאה (${response.status}). `;
                     
                     if (response.status === 404) {
-                        friendlyMsg = "שגיאה 404: המודל לא נמצא גם בנסיון השני. ייתכן והמפתח אינו תקין.";
-                    } else if (response.status === 400 && errorData.error?.message?.includes('API key')) {
-                        friendlyMsg = "המפתח שהוזן אינו תקין (Invalid Key). אנא בדקו שוב.";
-                        const section = document.getElementById('apiKeySection');
-                        section.classList.remove('hidden');
+                        friendlyMsg = "שגיאה 404: המודל לא נמצא. המפתח כנראה תקין, אך ייתכן שיש בעיית גישה למודל זה בחשבונך.";
+                    } else if (response.status === 400) {
+                        friendlyMsg = "שגיאה 400: המפתח אינו תקין (Invalid Key). נסה ללחוץ על 'מחק מפתח שמור' ולהזין מחדש.";
                     } else if (response.status === 403) {
-                         friendlyMsg = "אין הרשאה (403). וודאו שהמפתח פעיל.";
+                         friendlyMsg = "אין הרשאה (403). וודאו שהמפתח פעיל ב-Google AI Studio.";
                          const section = document.getElementById('apiKeySection');
                          section.classList.remove('hidden');
                     }
