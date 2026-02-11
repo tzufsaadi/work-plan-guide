@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>המדריך לתכנון תוכניות עבודה ממשלתיות + מחולל מדדים</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Marked.js for rendering AI markdown response -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&display=swap');
+        
+        body {
+            font-family: 'Heebo', sans-serif;
+            background-color: #F3F4F6; /* gray-100 */
+            color: #1F2937; /* gray-800 */
+        }
+
+        /* Chart Container Styling - Mandatory Requirements */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; /* Explicit max-width */
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px; /* Base height */
+            max-height: 400px; /* Max height cap */
+            background-color: white;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 640px) {
+            .chart-container {
+                height: 300px;
+            }
+        }
+
+        /* Custom Utilities for Flow Diagram (No SVG) */
+        .flow-step {
+            position: relative;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 0.5rem;
+            border-right: 4px solid #06B6D4; /* cyan-500 */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .flow-step::after {
+            content: '▼';
+            position: absolute;
+            bottom: -1.5rem;
+            left: 50%;
+            transform: translateX(50%);
+            color: #9CA3AF; /* gray-400 */
+            font-size: 1.2rem;
+        }
+
+        .flow-step:last-child::after {
+            content: none;
+        }
+
+        /* AI Section Styling */
+        .ai-response-content ul {
+            list-style-type: none; /* Removed default bullets to control formatting */
+            padding-right: 0;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .ai-response-content li {
+            margin-bottom: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            background-color: #F9FAFB;
+            border-right: 3px solid #E5E7EB;
+        }
+        .ai-response-content strong {
+            font-weight: 700;
+            color: #1E3A8A;
+            display: block; /* Make titles distinct blocks */
+            margin-bottom: 0.25rem;
+        }
+
+        /* Palette Classes */
+        .text-primary { color: #1E3A8A; } /* blue-900 */
+        .bg-primary { background-color: #1E3A8A; }
+        .text-secondary { color: #06B6D4; } /* cyan-500 */
+        .bg-secondary { background-color: #06B6D4; }
+        .text-accent { color: #F59E0B; } /* amber-500 */
+        .bg-accent { background-color: #F59E0B; }
+        
+        /* Loading Animation */
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 3px solid #06B6D4;
+            width: 20px;
+            height: 20px;
+            -webkit-animation: spin 1s linear infinite; /* Safari */
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <!-- 
+        Palette Selection: Brilliant Blues & Teal
+        Primary: #1E3A8A (Deep Blue)
+        Secondary: #06B6D4 (Vibrant Cyan)
+        Accent: #F59E0B (Amber/Orange for highlights)
+    -->
+</head>
+<body class="p-4 md:p-8">
+
+    <!-- Header -->
+    <header class="max-w-6xl mx-auto text-center mb-12">
+        <h1 class="text-4xl md:text-6xl font-black text-primary mb-4">תכנון עבודה ממשלתי</h1>
+        <h2 class="text-xl md:text-2xl text-gray-600 font-light">מדריך מעשי למעבר מניהול תפוקות לניהול תוצאות</h2>
+        <div class="w-24 h-2 bg-secondary mx-auto mt-6 rounded-full"></div>
+    </header>
+
+    <main class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+        <!-- Section 1: Introduction & Principles -->
+        <section class="col-span-1 md:col-span-2 lg:col-span-3 bg-white rounded-xl shadow-lg p-8 border-t-8 border-primary">
+            <h3 class="text-3xl font-bold text-gray-800 mb-6">עקרונות היסוד: המהפכה התפיסתית</h3>
+            <p class="text-lg text-gray-600 mb-8 leading-relaxed">
+                תכנון ממשלתי איכותי אינו רשימת מכולת של משימות. הוא תהליך אסטרטגי שמטרתו לשנות מציאות.
+                האתגר המרכזי הוא המעבר ממדידת <strong>תפוקות</strong> (כמה כבישים סללנו?) למדידת <strong>תוצאות</strong> (כמה חיים הצלנו?).
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Principle 1 -->
+                <div class="bg-gray-50 p-6 rounded-lg text-center hover:shadow-md transition-shadow">
+                    <div class="text-4xl mb-4">👁️</div>
+                    <h4 class="font-bold text-primary text-xl mb-2">שקיפות</h4>
+                    <p class="text-sm text-gray-600">התוכנית גלויה לציבור ולעובדים. מה שלא שקוף, לא קיים.</p>
+                </div>
+                <!-- Principle 2 -->
+                <div class="bg-gray-50 p-6 rounded-lg text-center hover:shadow-md transition-shadow">
+                    <div class="text-4xl mb-4">📏</div>
+                    <h4 class="font-bold text-primary text-xl mb-2">מדידות</h4>
+                    <p class="text-sm text-gray-600">מה שלא נמדד – לא מנוהל. כל יעד חייב מספר.</p>
+                </div>
+                <!-- Principle 3 -->
+                <div class="bg-gray-50 p-6 rounded-lg text-center hover:shadow-md transition-shadow">
+                    <div class="text-4xl mb-4">🧩</div>
+                    <h4 class="font-bold text-primary text-xl mb-2">אינטגרציה</h4>
+                    <p class="text-sm text-gray-600">הלימה מוחלטת בין המשימות, התקציב וכוח האדם.</p>
+                </div>
+                <!-- Principle 4 -->
+                <div class="bg-gray-50 p-6 rounded-lg text-center hover:shadow-md transition-shadow">
+                    <div class="text-4xl mb-4">🔄</div>
+                    <h4 class="font-bold text-primary text-xl mb-2">המשכיות</h4>
+                    <p class="text-sm text-gray-600">חיבור האסטרטגיה ארוכת הטווח לתוכנית השנתית.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: The Planning Funnel (HTML Structure) -->
+        <section class="col-span-1 lg:col-span-1">
+            <div class="sticky top-8">
+                <h3 class="text-2xl font-bold text-primary mb-6">הפירמידה התכנונית</h3>
+                <p class="text-gray-600 mb-6 text-sm">
+                    תהליך התכנון נבנה בצורה היררכית, מהרמה המופשטת ביותר (חזון) ועד לרמת הביצוע היומיומית (משימות).
+                </p>
+                
+                <div class="flex flex-col">
+                    <div class="flow-step">
+                        <span class="absolute top-0 right-0 bg-primary text-white text-xs px-2 py-1 rounded-bl-lg">שלב א'</span>
+                        <h4 class="font-bold text-lg">חזון וייעוד (Vision)</h4>
+                        <p class="text-xs text-gray-500 mt-1">לאן אנו שואפים להגיע בעוד 5-10 שנים?</p>
+                    </div>
+                    
+                    <div class="flow-step">
+                        <span class="absolute top-0 right-0 bg-primary text-white text-xs px-2 py-1 rounded-bl-lg">שלב ב'</span>
+                        <h4 class="font-bold text-lg">מטרות על (Strategic Goals)</h4>
+                        <p class="text-xs text-gray-500 mt-1">השינוי המרכזי שאנו רוצים לחולל.</p>
+                    </div>
+
+                    <div class="flow-step">
+                        <span class="absolute top-0 right-0 bg-primary text-white text-xs px-2 py-1 rounded-bl-lg">שלב ב'</span>
+                        <h4 class="font-bold text-lg">יעדים אופרטיביים</h4>
+                        <p class="text-xs text-gray-500 mt-1">יעדים קונקרטיים הנגזרים מהמטרות.</p>
+                    </div>
+
+                    <div class="flow-step !mb-0 border-r-4 border-accent">
+                        <span class="absolute top-0 right-0 bg-accent text-white text-xs px-2 py-1 rounded-bl-lg">שלב ד'</span>
+                        <h4 class="font-bold text-lg">משימות (Tasks)</h4>
+                        <p class="text-xs text-gray-500 mt-1">מי עושה מה, מתי ועם איזה תקציב.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: AI KPI Generator -->
+        <section class="col-span-1 md:col-span-1 lg:col-span-2 flex flex-col gap-6">
+            
+            <!-- SMART Chart -->
+            <div>
+                <div class="mb-4">
+                    <h3 class="text-2xl font-bold text-primary">מודל SMART למדדים</h3>
+                    <p class="text-gray-600 mt-2">
+                        החלק הקריטי ביותר בתוכנית הוא הגדרת המדדים. מדד טוב אינו "תחושת בטן", אלא כלי ניהולי מדויק.
+                    </p>
+                </div>
+                <div class="chart-container">
+                    <canvas id="smartChart"></canvas>
+                </div>
+            </div>
+
+            <!-- AI Tool -->
+            <div class="bg-gradient-to-br from-indigo-50 to-white p-6 rounded-xl border border-indigo-100 shadow-lg mt-4 ring-1 ring-indigo-50">
+                <div class="flex items-center gap-3 mb-4 border-b border-indigo-100 pb-3">
+                    <div class="bg-white p-2 rounded-full shadow-sm text-2xl">🤖</div>
+                    <div>
+                        <h4 class="text-xl font-bold text-primary">מחולל מדדי תפוקה vs תוצאה</h4>
+                        <p class="text-xs text-gray-500">מופעל על ידי בינה מלאכותית</p>
+                    </div>
+                </div>
+                
+                <p class="text-sm text-gray-700 mb-4 leading-relaxed">
+                    מתלבטים מה ההבדל בין <strong>מה שעשיתם</strong> לבין <strong>מה שהשגתם</strong>?
+                    <br>הקלידו משימה או מטרה (למשל: "הכשרת עובדים", "שיפור תשתיות"), והמערכת תייצר עבורכם דוגמה למדד תפוקה ומדד תוצאה.
+                </p>
+                
+                <div class="flex flex-col gap-3">
+                    <input type="text" id="aiInput" placeholder="הקלידו כאן נושא (לדוגמה: חינוך טכנולוגי)..." class="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent shadow-sm transition-all text-gray-800 bg-white">
+                    
+                    <button onclick="generateKPI()" id="aiBtn" class="w-full bg-primary text-white px-6 py-3 rounded-lg font-bold hover:bg-blue-800 transition-all shadow-md active:scale-95 flex items-center justify-center gap-2">
+                        <span id="aiBtnText">צור השוואת מדדים</span>
+                        <div id="aiLoader" class="loader hidden"></div>
+                    </button>
+                </div>
+
+                <!-- Result Container -->
+                <div id="aiResultContainer" class="mt-6 hidden">
+                    <h5 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">הצעת המערכת:</h5>
+                    <div id="aiResult" class="p-5 bg-white rounded-lg border border-gray-200 text-sm text-gray-700 ai-response-content shadow-inner">
+                        <!-- AI Response will go here -->
+                    </div>
+                </div>
+                
+                <div id="aiError" class="mt-4 hidden p-3 bg-red-50 text-red-600 text-sm rounded border border-red-100 flex items-center gap-2">
+                    <span>⚠️</span> אירעה שגיאה. אנא נסו שנית מאוחר יותר.
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Outcome vs Output -->
+        <section class="col-span-1 md:col-span-2 lg:col-span-3 bg-white rounded-xl shadow-lg p-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                <div>
+                    <h3 class="text-2xl font-bold text-primary mb-4">תפוקה (Output) מול תוצאה (Outcome)</h3>
+                    <p class="text-gray-600 mb-4 leading-relaxed">
+                        הטעות הנפוצה ביותר בתכנון ציבורי היא בלבול בין עשייה להשפעה.
+                        בדוגמה משמאל (בטיחות בדרכים), אנו רואים שאין קשר ישיר בין כמות האספלט שנסלל (תפוקה) לבין מספר התאונות (תוצאה).
+                    </p>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-start">
+                            <span class="text-red-500 font-bold ml-2">✕</span>
+                            <span><strong>מדד תפוקה שגוי:</strong> "סללנו 50 קילומטר כביש השנה." (אז מה?)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-green-500 font-bold ml-2">✓</span>
+                            <span><strong>מדד תוצאה נכון:</strong> "הפחתנו את מספר ההרוגים ב-5%." (זו המטרה!)</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="chart-container">
+                    <canvas id="outcomeChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Consultants (New Section) -->
+        <section class="col-span-1 md:col-span-2 lg:col-span-3">
+            <h3 class="text-2xl font-bold text-primary mb-6 border-b pb-2">תפקיד חברות הייעוץ בתוכנית העבודה</h3>
+            <p class="text-gray-600 mb-6">
+                שילוב יועצים חיצוניים הוא כלי רב עוצמה, אך דורש ניהול סיכונים. האיזון הנכון הוא בין קבלת מתודולוגיה ונתונים מהיועץ, לבין שמירת האחריות וההובלה בידי המשרד.
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Value Add Card -->
+                <div class="bg-blue-50 p-6 rounded-lg border-r-4 border-blue-500">
+                    <h4 class="text-xl font-bold text-blue-900 mb-4 flex items-center">
+                        <span class="text-2xl ml-2">🚀</span> הערך המוסף של היועץ
+                    </h4>
+                    <ul class="space-y-3 text-gray-700">
+                        <li class="flex items-start">
+                            <span class="bg-blue-200 text-blue-800 text-xs font-bold px-2 py-1 rounded ml-2 mt-1">מתודולוגיה</span>
+                            <span>הבאת תבניות עבודה ושפה אחידה לארגון (PMO).</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="bg-blue-200 text-blue-800 text-xs font-bold px-2 py-1 rounded ml-2 mt-1">בנצ'מארק</span>
+                            <span>השוואה למשרדים מקבילים בעולם (OECD) ולמידה מהצלחות.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="bg-blue-200 text-blue-800 text-xs font-bold px-2 py-1 rounded ml-2 mt-1">מיקוד</span>
+                            <span>"איתגור" המנהלים וזיקוק מטרות חדות ומדידות.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Ownership Card -->
+                <div class="bg-amber-50 p-6 rounded-lg border-r-4 border-amber-500">
+                    <h4 class="text-xl font-bold text-amber-900 mb-4 flex items-center">
+                        <span class="text-2xl ml-2">⚠️</span> ניהול סיכון: בעלות (Ownership)
+                    </h4>
+                    <ul class="space-y-3 text-gray-700">
+                        <li class="flex items-start">
+                            <span class="bg-amber-200 text-amber-900 text-xs font-bold px-2 py-1 rounded ml-2 mt-1">המנהל מחליט</span>
+                            <span>היועץ רק ממליץ. האחריות לביצוע נשארת אצל הדרג המנהל.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="bg-amber-200 text-amber-900 text-xs font-bold px-2 py-1 rounded ml-2 mt-1">הטמעה</span>
+                            <span>חובה לשתף את אנשי המשרד בתהליך כדי שהידע לא יעזוב עם היועץ.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="bg-amber-200 text-amber-900 text-xs font-bold px-2 py-1 rounded ml-2 mt-1">זהות</span>
+                            <span>התוכנית חייבת להיות "של המשרד" ולא "של חברת הייעוץ".</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 6: Timeline & Control -->
+        <section class="col-span-1 md:col-span-2 lg:col-span-3 mt-8">
+            <h3 class="text-2xl font-bold text-primary mb-6 text-center">שגרות ניהול ובקרה (Gantt)</h3>
+            <div class="chart-container" style="max-width: 800px;">
+                <canvas id="timelineChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="col-span-1 md:col-span-2 lg:col-span-3 text-center text-gray-400 text-sm mt-8 border-t pt-6">
+            <p>נוצר על בסיס המתודולוגיה של משרד ראש הממשלה לתכנון עבודה | כולל מנוע בינה מלאכותית</p>
+        </footer>
+
+    </main>
+
+    <script>
+        // --- Gemini API Configuration ---
+        const apiKey = ""; // API Key will be injected by the environment
+
+        async function generateKPI() {
+            const input = document.getElementById('aiInput').value;
+            const resultContainer = document.getElementById('aiResultContainer');
+            const resultDiv = document.getElementById('aiResult');
+            const errorDiv = document.getElementById('aiError');
+            const btnText = document.getElementById('aiBtnText');
+            const loader = document.getElementById('aiLoader');
+
+            if (!input.trim()) {
+                alert("אנא הזינו נושא או מטרה");
+                return;
+            }
+
+            // UI State: Loading
+            resultContainer.classList.add('hidden');
+            errorDiv.classList.add('hidden');
+            btnText.classList.add('hidden');
+            loader.classList.remove('hidden');
+
+            // Updated Prompt for Output vs Outcome
+            const systemPrompt = `
+                אתה מומחה לתכנון אסטרטגי ומדיניות ציבורית.
+                המשימה שלך היא לעזור למשתמש להבין את ההבדל בין "תפוקה" (Output) ל"תוצאה" (Outcome) עבור הנושא שהוא הזין.
+
+                עבור הנושא שהמשתמש הזין, צור תשובה בפורמט Markdown הכוללת:
+                1. **מדד תפוקה (Output Indicator):** דוגמה למדד המודד את הפעילות עצמה (מה עשינו? כמה יצרנו?). הדגש שזה מודד כמות/ביצוע.
+                2. **מדד תוצאה (Outcome Indicator):** דוגמה למדד המודד את השינוי או ההשפעה (מה השתנה במציאות? מה הערך לציבור?). הדגש שזה מודד איכות/השפעה.
+                3. **הסבר קצר:** משפט אחד שמסביר את ההבדל המהותי במקרה הספציפי הזה.
+
+                שמור על תשובה קצרה, מקצועית ובעברית. השתמש בבוליטים לפורמט ברור.
+            `;
+
+            const userQuery = `הנושא הוא: ${input}`;
+
+            try {
+                // Determine API endpoint and payload
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+                
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: userQuery }] }],
+                        systemInstruction: { parts: [{ text: systemPrompt }] }
+                    })
+                });
+
+                if (!response.ok) throw new Error('Network response was not ok');
+
+                const data = await response.json();
+                const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                if (aiText) {
+                    resultDiv.innerHTML = marked.parse(aiText);
+                    resultContainer.classList.remove('hidden');
+                } else {
+                    throw new Error('No content generated');
+                }
+
+            } catch (error) {
+                console.error("Gemini Error:", error);
+                errorDiv.classList.remove('hidden');
+            } finally {
+                // UI State: Reset
+                btnText.classList.remove('hidden');
+                loader.classList.add('hidden');
+            }
+        }
+
+        // --- Chart Utilities ---
+
+        function wrapLabel(label) {
+            if (typeof label !== 'string' || label.length <= 16) return label;
+            const words = label.split(' ');
+            const lines = [];
+            let currentLine = words[0];
+
+            for (let i = 1; i < words.length; i++) {
+                if ((currentLine + " " + words[i]).length <= 16) {
+                    currentLine += " " + words[i];
+                } else {
+                    lines.push(currentLine);
+                    currentLine = words[i];
+                }
+            }
+            lines.push(currentLine);
+            return lines;
+        }
+
+        function processLabels(labels) {
+            return labels.map(label => wrapLabel(label));
+        }
+
+        const commonTooltipOptions = {
+            callbacks: {
+                title: function(tooltipItems) {
+                    const item = tooltipItems[0];
+                    let label = item.chart.data.labels[item.dataIndex];
+                    if (Array.isArray(label)) {
+                        return label.join(' ');
+                    } else {
+                        return label;
+                    }
+                }
+            }
+        };
+
+        // --- Chart 1: SMART Radar Chart ---
+        const ctxSmart = document.getElementById('smartChart').getContext('2d');
+        const smartLabels = ["ספציפי (Specific)", "מדיד (Measurable)", "בר השגה (Achievable)", "רלוונטי (Relevant)", "תחום בזמן (Time-bound)"];
+        
+        new Chart(ctxSmart, {
+            type: 'radar',
+            data: {
+                labels: processLabels(smartLabels),
+                datasets: [{
+                    label: 'ציון איכות המדד',
+                    data: [90, 85, 80, 95, 100],
+                    fill: true,
+                    backgroundColor: 'rgba(6, 182, 212, 0.2)',
+                    borderColor: '#06B6D4',
+                    pointBackgroundColor: '#1E3A8A',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#1E3A8A'
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: commonTooltipOptions
+                },
+                scales: {
+                    r: {
+                        angleLines: { color: '#E5E7EB' },
+                        grid: { color: '#E5E7EB' },
+                        pointLabels: {
+                            font: { family: 'Heebo', size: 12 },
+                            color: '#374151'
+                        },
+                        suggestedMin: 0,
+                        suggestedMax: 100
+                    }
+                }
+            }
+        });
+
+        // --- Chart 2: Outcome vs Output (Mixed Chart) ---
+        const ctxOutcome = document.getElementById('outcomeChart').getContext('2d');
+        const years = ['2019', '2020', '2021', '2022', '2023'];
+
+        new Chart(ctxOutcome, {
+            type: 'bar',
+            data: {
+                labels: processLabels(years),
+                datasets: [
+                    {
+                        type: 'line',
+                        label: 'מספר תאונות (תוצאה)',
+                        data: [420, 380, 410, 350, 320],
+                        borderColor: '#F59E0B', 
+                        backgroundColor: '#F59E0B',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        yAxisID: 'y1'
+                    },
+                    {
+                        type: 'bar',
+                        label: 'ק"מ כביש שנסלל (תפוקה)',
+                        data: [50, 120, 80, 150, 200],
+                        backgroundColor: '#1E3A8A', 
+                        borderRadius: 4,
+                        yAxisID: 'y'
+                    }
+                ]
+            },
+            options: {
+                maintainAspectRatio: false,
+                responsive: true,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    tooltip: commonTooltipOptions,
+                    legend: { position: 'bottom', labels: { font: { family: 'Heebo' } } }
+                },
+                scales: {
+                    x: { grid: { display: false } },
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: { display: true, text: 'ק"מ סלילה' },
+                        grid: { color: '#F3F4F6' }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: { display: true, text: 'מספר תאונות' },
+                        grid: { drawOnChartArea: false }
+                    }
+                }
+            }
+        });
+
+        // --- Chart 3: Timeline / Control Cycle (Floating Bars) ---
+        const ctxTimeline = document.getElementById('timelineChart').getContext('2d');
+        const tasks = ["תכנון אסטרטגי", "אישור תקציב", "ביצוע Q1-Q2", "בקרה חצי שנתית", "ביצוע Q3-Q4", "סיכום שנה"];
+        const timelineData = [[0, 2], [1, 3], [3, 6], [6, 7], [7, 12], [11, 12]];
+
+        new Chart(ctxTimeline, {
+            type: 'bar',
+            data: {
+                labels: processLabels(tasks),
+                datasets: [{
+                    label: 'חודשי פעילות',
+                    data: timelineData,
+                    backgroundColor: ['#9CA3AF', '#F59E0B', '#06B6D4', '#1E3A8A', '#06B6D4', '#1E3A8A'],
+                    borderRadius: 4,
+                    barPercentage: 0.6
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                maintainAspectRatio: false,
+                responsive: true,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            title: commonTooltipOptions.callbacks.title,
+                            label: function(context) {
+                                const raw = context.raw;
+                                return `חודשים: ${raw[0] + 1} - ${raw[1]}`;
+                            }
+                        }
+                    },
+                    legend: { display: false }
+                },
+                scales: {
+                    x: {
+                        min: 0,
+                        max: 12,
+                        grid: { color: '#F3F4F6' },
+                        ticks: {
+                            stepSize: 1,
+                            callback: function(value) {
+                                const months = ["ינו", "פבר", "מרץ", "אפר", "מאי", "יוני", "יולי", "אוג", "ספט", "אוק", "נוב", "דצמ"];
+                                return months[value] || '';
+                            }
+                        }
+                    },
+                    y: { grid: { display: false } }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
