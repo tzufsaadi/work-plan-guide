@@ -218,26 +218,27 @@
             <!-- AI Tool -->
             <div class="bg-gradient-to-br from-indigo-50 to-white p-6 rounded-xl border border-indigo-100 shadow-lg mt-4 ring-1 ring-indigo-50 relative">
                 
-                <!-- API Key Toggle -->
-                <button onclick="toggleApiKeyInput()" class="absolute top-4 left-4 text-gray-400 hover:text-primary transition-colors" title="הגדרות API">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <!-- VISIBLE API Key Toggle -->
+                <button onclick="toggleApiKeyInput()" class="absolute top-4 left-4 bg-white border border-gray-200 text-gray-600 hover:text-primary hover:border-primary px-3 py-1 rounded-full text-xs font-bold shadow-sm transition-all flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
+                    הגדר מפתח
                 </button>
 
                 <!-- API Key Input Section (Hidden by default) -->
-                <div id="apiKeySection" class="hidden mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <div id="apiKeySection" class="hidden mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200 mt-8">
                     <label class="block text-sm font-bold text-gray-700 mb-2">מפתח Gemini API (נדרש להפעלת ה-AI)</label>
-                    <input type="password" id="userApiKey" placeholder="הדבק כאן את המפתח..." class="w-full p-2 border border-gray-300 rounded mb-2 text-sm">
+                    <input type="password" id="userApiKey" placeholder="הדבק כאן את המפתח (מתחיל ב-AIza)..." class="w-full p-2 border border-gray-300 rounded mb-2 text-sm">
                     <p class="text-xs text-gray-500 mb-2">
-                        המפתח נשמר בדפדפן שלך בלבד ולא נשלח לשום שרת אחר.
-                        <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-primary underline">השג מפתח בחינם כאן</a>.
+                        המפתח נשמר בדפדפן שלך בלבד.
+                        <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-primary underline font-bold">השג מפתח בחינם כאן</a>.
                     </p>
-                    <button onclick="saveApiKey()" class="bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700">שמור מפתח</button>
+                    <button onclick="saveApiKey()" class="bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700 w-full md:w-auto">שמור והמשך</button>
                 </div>
 
-                <div class="flex items-center gap-3 mb-4 border-b border-indigo-100 pb-3">
+                <div class="flex items-center gap-3 mb-4 border-b border-indigo-100 pb-3 pt-2">
                     <div class="bg-white p-2 rounded-full shadow-sm text-2xl">🤖</div>
                     <div>
                         <h4 class="text-xl font-bold text-primary">מחולל מדדי תפוקה vs תוצאה</h4>
@@ -268,7 +269,7 @@
                 </div>
                 
                 <div id="aiError" class="mt-4 hidden p-3 bg-red-50 text-red-600 text-sm rounded border border-red-100 flex items-center gap-2">
-                    <span id="aiErrorText">⚠️ אירעה שגיאה. אנא נסו שנית מאוחר יותר.</span>
+                    <span id="aiErrorText">⚠️ אירעה שגיאה.</span>
                 </div>
             </div>
         </section>
@@ -410,17 +411,16 @@
             }
 
             // Determine which key to use:
-            // 1. Check if the environment injected a key (apiKey variable)
-            // 2. If not, check localStorage
-            // 3. If not, check the input field directly
             let activeKey = apiKey; 
             if (!activeKey) {
                 activeKey = localStorage.getItem('gemini_api_key') || document.getElementById('userApiKey').value;
             }
 
             if (!activeKey) {
-                alert("כדי להפעיל את ה-AI, יש להזין מפתח API בהגדרות (לחץ על גלגל השיניים בצד).");
-                toggleApiKeyInput();
+                alert("לא נמצא מפתח API. אנא לחץ על כפתור 'הגדר מפתח' והזן את המפתח שלך מגוגל.");
+                // Ensure input is visible
+                const section = document.getElementById('apiKeySection');
+                section.classList.remove('hidden');
                 return;
             }
 
@@ -445,8 +445,8 @@
             const userQuery = `הנושא הוא: ${input}`;
 
             try {
-                // Determine API endpoint and payload
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${activeKey}`;
+                // Using stable model (gemini-1.5-flash) for better compatibility with personal keys
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${activeKey}`;
                 
                 const response = await fetch(url, {
                     method: 'POST',
@@ -461,8 +461,20 @@
 
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => ({}));
-                    console.error("API Error:", errorData);
-                    throw new Error(`שגיאת תקשורת: ${response.status}`);
+                    console.error("API Error Details:", errorData);
+                    
+                    let friendlyMsg = `שגיאה (${response.status}). `;
+                    if (response.status === 400 && errorData.error?.message?.includes('API key')) {
+                        friendlyMsg = "המפתח שהוזן אינו תקין (Invalid Key). אנא בדקו שוב.";
+                        const section = document.getElementById('apiKeySection');
+                        section.classList.remove('hidden');
+                    } else if (response.status === 403) {
+                         friendlyMsg = "אין הרשאה (403). וודאו שהמפתח פעיל.";
+                         const section = document.getElementById('apiKeySection');
+                         section.classList.remove('hidden');
+                    }
+                    
+                    throw new Error(friendlyMsg);
                 }
 
                 const data = await response.json();
@@ -477,12 +489,8 @@
 
             } catch (error) {
                 console.error("Gemini Error:", error);
-                errorText.innerText = "אירעה שגיאה. אנא בדקו את מפתח ה-API ונסו שנית.";
+                errorText.innerText = error.message || "אירעה שגיאה לא צפויה.";
                 errorDiv.classList.remove('hidden');
-                // Open settings if it's likely an auth error
-                if (error.message.includes('400') || error.message.includes('403')) {
-                    toggleApiKeyInput();
-                }
             } finally {
                 // UI State: Reset
                 btnText.classList.remove('hidden');
